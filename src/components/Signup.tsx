@@ -14,16 +14,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { supabase } from "../utils/supabase";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "../store/store";
+
+interface FormData {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+}
 
 export function Signup() {
-  interface FormData {
-    email: string;
-    password: string;
-  }
+  const router = useRouter();
+  const setUser = useUserStore((state: any) => state.setUser);
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
+    first_name: "",
+    last_name: "",
   });
 
   const handleChange = (e: any) => {
@@ -40,9 +49,22 @@ export function Signup() {
     const { data, error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
+      options: {
+        data: {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+        },
+      },
     });
 
-    console.log(data, error);
+    if (data) {
+      setUser(true);
+      router.push("/");
+    }
+
+    if (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -57,6 +79,26 @@ export function Signup() {
         <CardContent>
           <form>
             <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="email">First Name</Label>
+                <Input
+                  id="first_name"
+                  type="text"
+                  placeholder="Enter your first name"
+                  name="first_name"
+                  onChange={(e) => handleChange(e)}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="email">Last Name</Label>
+                <Input
+                  id="last_name"
+                  type="text"
+                  placeholder="Enter your last name"
+                  name="last_name"
+                  onChange={(e) => handleChange(e)}
+                />
+              </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input

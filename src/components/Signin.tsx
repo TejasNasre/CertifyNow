@@ -12,8 +12,46 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { supabase } from "../utils/supabase";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "../store/store";
+
+interface FormData {
+  email: string;
+  password: string;
+}
 
 export function Signin() {
+  const router = useRouter();
+  const setUser = useUserStore((state: any) => state.setUser);
+
+  const [formData, setFormData] = useState<FormData>({
+    email: "",
+    password: "",
+  });
+
+  const onChangeHandler = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (data) {
+      setUser(true);
+      router.push("/");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-black text-white">
       <Card className="w-[350px] bg-black text-white">
@@ -28,21 +66,31 @@ export function Signin() {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  name="email"
+                  onChange={(e) => onChangeHandler(e)}
+                />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
+                  name="password"
                   placeholder="Enter your password"
+                  onChange={(e) => onChangeHandler(e)}
                 />
               </div>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col">
-          <Button className="w-full">Sign In</Button>
+          <Button className="w-full" onClick={(e) => handleSubmit(e)}>
+            Sign In
+          </Button>
           <div className="relative my-4">
             <div className="relative flex justify-center text-xs uppercase">
               <span className="text-white px-2">Or continue with</span>

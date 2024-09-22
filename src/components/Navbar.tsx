@@ -1,19 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { supabase } from "@/utils/supabase";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "../store/store";
 
 export default function Navbar() {
+  const router = useRouter();
+  const { user } = useUserStore() as { user: any };
+  const setUser = useUserStore((state: any) => state.setUser);
+
   const [isOpen, setIsOpen] = useState(false);
+  // const [isSignedIn, setIsSignedIn] = useState(false);
+
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     const {
+  //       data: { session },
+  //     } = await supabase.auth.getSession();
+  //     if (session) {
+  //       setIsSignedIn(true);
+  //     }
+  //   }
+
+  //   fetchSession();
+  // });
+
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.log(error.message);
+    } else {
+      setUser(false);
+      // setIsSignedIn(false);
+      router.push("/sign-in");
+    }
+  };
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Templates", href: "/templates" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "About", href: "/about" },
+    { name: "Generate Certificate", href: "/generate-certificate" },
   ];
 
   return (
@@ -37,22 +67,34 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
-          <Link href="/sign-in">
+          {setUser ? (
             <Button
               variant="outline"
               className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
+              onClick={() => logout()}
             >
-              Sign In
+              Logout
             </Button>
-          </Link>
-          <Link href="/sign-up">
-            <Button
-              variant="outline"
-              className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
-            >
-              Sign Up
-            </Button>
-          </Link>
+          ) : (
+            <>
+              <Link href="/sign-in">
+                <Button
+                  variant="outline"
+                  className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button
+                  variant="outline"
+                  className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </nav>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -81,23 +123,26 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              <Link href="/sign-in">
-                <Button
-                  variant="outline"
-                  className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
-                >
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/sign-up">
-                <Button
-                  variant="outline"
-                  className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Sign Up
-                </Button>
-              </Link>
+              {setUser ? null : (
+                <>
+                  <Link href="/sign-in">
+                    <Button
+                      variant="outline"
+                      className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <Button
+                      variant="outline"
+                      className="text-stone-300 border-stone-600 hover:bg-stone-800 hover:text-stone-100"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </nav>
           </SheetContent>
         </Sheet>

@@ -9,9 +9,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {FileText, Zap, Users } from "lucide-react";
+import { FileText, Zap, Users } from "lucide-react";
+import { useEffect } from "react";
+import { supabase } from "../utils/supabase";
 
 export function HomePage() {
+  useEffect(() => {
+    const getUsesrMetadata = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let metadata = user?.user_metadata;
+      // console.log(metadata);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      // console.log(session)
+    };
+    getUsesrMetadata();
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow">
