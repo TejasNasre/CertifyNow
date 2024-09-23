@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Papa from "papaparse";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 interface TextPosition {
   x: number;
@@ -285,7 +286,9 @@ export default function CertificateEditor() {
               ref={containerRef}
               className="mt-4 relative border border-gray-300"
             >
-              <img
+              <Image
+                width={800}
+                height={800}
                 ref={imageRef}
                 src={certificateImage}
                 alt="Certificate"

@@ -19,7 +19,7 @@ export function HomePage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      let metadata = user?.user_metadata;
+      // let metadata = user?.user_metadata;
       // console.log(metadata);
 
       const {

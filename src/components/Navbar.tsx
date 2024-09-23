@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,7 +11,7 @@ import { useUserStore } from "../store/store";
 
 export default function Navbar() {
   const router = useRouter();
-  const { user } = useUserStore() as { user: any };
+  // const { user } = useUserStore() as { user: any };
   const setUser = useUserStore((state: any) => state.setUser);
 
   const [isOpen, setIsOpen] = useState(false);
